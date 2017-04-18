@@ -7,6 +7,15 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
 
+-- The => infix operator creates a new tuple from its arguments.
+-- This gives a nicer syntax for creating a Dict from a definition list.
+
+
+(=>) : a -> b -> ( a, b )
+(=>) a b =
+    ( a, b )
+
+
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
 
@@ -26,38 +35,38 @@ model =
     { currentScene = "initial"
     , scenes =
         Dict.fromList
-            [ ( "initial"
-              , { text =
-                    """
+            [ ("initial"
+                => { text =
+                        """
                     This is a fascinating story, more magical then Harry Potter, more insightful than
                     Moby Dick, more weighty that War and Peace. It will surely be the next Great
                     American Novel.
                     """
-                , buttons =
-                    [ { label = "I don't buy it", goto = "little_faith" }
-                    , { label = "Cool!", goto = "gratitude" }
-                    ]
-                }
+                   , buttons =
+                        [ { label = "I don't buy it", goto = "little_faith" }
+                        , { label = "Cool!", goto = "gratitude" }
+                        ]
+                   }
               )
-            , ( "little_faith"
-              , { text =
-                    """
+            , ("little_faith"
+                => { text =
+                        """
                         Whatever, bro.
                         """
-                , buttons =
-                    [ { label = "Go back", goto = "initial" }
-                    ]
-                }
+                   , buttons =
+                        [ { label = "Go back", goto = "initial" }
+                        ]
+                   }
               )
-            , ( "gratitude"
-              , { text =
-                    """
+            , ("gratitude"
+                => { text =
+                        """
                         Thanks! Your faith will be rewarded.
                         """
-                , buttons =
-                    [ { label = "Go back", goto = "initial" }
-                    ]
-                }
+                   , buttons =
+                        [ { label = "Go back", goto = "initial" }
+                        ]
+                   }
               )
             ]
     }
