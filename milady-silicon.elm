@@ -29,8 +29,9 @@ model =
             [ ( "initial"
               , { text =
                     """
-                    This is a fascinating story, more magical then Harry Potter, more insightful than Moby Dick,
-                    more weighty that War and Peace. It will surely be the next Great American Novel.
+                    This is a fascinating story, more magical then Harry Potter, more insightful than
+                    Moby Dick, more weighty that War and Peace. It will surely be the next Great
+                    American Novel.
                     """
                 , buttons =
                     [ { label = "I don't buy it", goto = "little_faith" }
