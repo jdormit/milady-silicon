@@ -54,59 +54,62 @@ type alias Model =
     }
 
 
+scenes =
+    Dict.fromList
+        [ ("initial"
+            => { context =
+                    { times_visited = 0
+                    }
+               , text =
+                    \context ->
+                        """
+                        This is a fascinating story, more magical then Harry Potter, more insightful than
+                        Moby Dick, more weighty that War and Peace. It will surely be the next Great
+                        American Novel.
+
+                        Visted """ ++ toString context.times_visited ++ """ times
+                        """
+               , actions =
+                    [ { label = "I don't buy it", action = Goto "little_faith" }
+                    , { label = "Cool!", action = Goto "gratitude" }
+                    ]
+               }
+          )
+        , ("little_faith"
+            => { context =
+                    { times_visited = 0
+                    }
+               , text =
+                    \context ->
+                        """
+                        Whatever, bro.
+                        """
+               , actions =
+                    [ { label = "Go back", action = Goto "initial" }
+                    ]
+               }
+          )
+        , ("gratitude"
+            => { context =
+                    { times_visited = 0
+                    }
+               , text =
+                    \context ->
+                        """
+                        Thanks! Your faith will be rewarded.
+                        """
+               , actions =
+                    [ { label = "Go back", action = Goto "initial" }
+                    ]
+               }
+          )
+        ]
+
+
 model : Model
 model =
     { currentScene = "initial"
-    , scenes =
-        Dict.fromList
-            [ ("initial"
-                => { context =
-                        { times_visited = 0
-                        }
-                   , text =
-                        \context ->
-                            """
-                            This is a fascinating story, more magical then Harry Potter, more insightful than
-                            Moby Dick, more weighty that War and Peace. It will surely be the next Great
-                            American Novel.
-
-                            Visted """ ++ toString context.times_visited ++ """ times
-                            """
-                   , actions =
-                        [ { label = "I don't buy it", action = Goto "little_faith" }
-                        , { label = "Cool!", action = Goto "gratitude" }
-                        ]
-                   }
-              )
-            , ("little_faith"
-                => { context =
-                        { times_visited = 0
-                        }
-                   , text =
-                        \context ->
-                            """
-                            Whatever, bro.
-                            """
-                   , actions =
-                        [ { label = "Go back", action = Goto "initial" }
-                        ]
-                   }
-              )
-            , ("gratitude"
-                => { context =
-                        { times_visited = 0
-                        }
-                   , text =
-                        \context ->
-                            """
-                            Thanks! Your faith will be rewarded.
-                            """
-                   , actions =
-                        [ { label = "Go back", action = Goto "initial" }
-                        ]
-                   }
-              )
-            ]
+    , scenes = scenes
     }
 
 
