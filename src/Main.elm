@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Scene
+import Scene exposing (SceneMsg(..))
 import Markdown
 import List exposing (map)
 import Dict
@@ -54,7 +54,7 @@ visit sceneName model =
 update : Scene.SceneMsg -> Model -> Model
 update msg model =
     case msg of
-        Scene.Goto scene ->
+        Goto scene ->
             visit scene { model | currentScene = scene }
 
 
