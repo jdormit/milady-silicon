@@ -40,8 +40,7 @@ scenes =
     Dict.fromList
         [ ("initial"
             => { context =
-                    { times_visited = 0
-                    }
+                    defaultSceneContext
                , text =
                     \context -> """
 This is a fascinating story, more magical then Harry Potter, more insightful than
@@ -58,8 +57,7 @@ Visted """ ++ toString context.times_visited ++ """ times
           )
         , ("little_faith"
             => { context =
-                    { times_visited = 0
-                    }
+                    defaultSceneContext
                , text =
                     \context -> """
 Whatever, bro.
@@ -71,8 +69,7 @@ Whatever, bro.
           )
         , ("gratitude"
             => { context =
-                    { times_visited = 0
-                    }
+                    defaultSceneContext
                , text =
                     \context -> """
 Thanks! Your faith will be rewarded.
