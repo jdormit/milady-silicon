@@ -59,9 +59,16 @@ Visted """ ++ toString context.times_visited ++ """ times
             => { context =
                     defaultSceneContext
                , text =
-                    \context -> """
-Whatever, bro.
-"""
+                    \context ->
+                        case context.times_visited of
+                            1 ->
+                                "Whatever, bro"
+
+                            2 ->
+                                "Seriously, again?"
+
+                            _ ->
+                                "I'm done with you."
                , actions =
                     [ { label = "Go back", action = Goto "initial" }
                     ]
