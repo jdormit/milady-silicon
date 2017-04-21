@@ -24,9 +24,33 @@ main =
 -- Model
 
 
+type alias SceneContext =
+    { times_visited : Int
+    }
+
+
+defaultSceneContext =
+    { times_visited = 0
+    }
+
+
+type alias Scene =
+    { context : SceneContext
+    , actions : List { label : String, action : Msg }
+    , text : SceneContext -> String
+    }
+
+
+defaultScene =
+    { context = defaultSceneContext
+    , actions = []
+    , text = \context -> "ERROR"
+    }
+
+
 type alias Model =
     { currentScene : String
-    , scenes : Dict.Dict String { text : String, buttons : List { label : String, goto : String } }
+    , scenes : Dict.Dict String Scene
     }
 
 
@@ -36,35 +60,49 @@ model =
     , scenes =
         Dict.fromList
             [ ("initial"
-                => { text =
-                        """
-                        This is a fascinating story, more magical then Harry Potter, more insightful than
-                        Moby Dick, more weighty that War and Peace. It will surely be the next Great
-                        American Novel.
-                        """
-                   , buttons =
-                        [ { label = "I don't buy it", goto = "little_faith" }
-                        , { label = "Cool!", goto = "gratitude" }
+                => { context =
+                        { times_visited = 0
+                        }
+                   , text =
+                        \context ->
+                            """
+                            This is a fascinating story, more magical then Harry Potter, more insightful than
+                            Moby Dick, more weighty that War and Peace. It will surely be the next Great
+                            American Novel.
+
+                            Visted """ ++ toString context.times_visited ++ """ times
+                            """
+                   , actions =
+                        [ { label = "I don't buy it", action = Goto "little_faith" }
+                        , { label = "Cool!", action = Goto "gratitude" }
                         ]
                    }
               )
             , ("little_faith"
-                => { text =
-                        """
-                        Whatever, bro.
-                        """
-                   , buttons =
-                        [ { label = "Go back", goto = "initial" }
+                => { context =
+                        { times_visited = 0
+                        }
+                   , text =
+                        \context ->
+                            """
+                            Whatever, bro.
+                            """
+                   , actions =
+                        [ { label = "Go back", action = Goto "initial" }
                         ]
                    }
               )
             , ("gratitude"
-                => { text =
-                        """
-                        Thanks! Your faith will be rewarded.
-                        """
-                   , buttons =
-                        [ { label = "Go back", goto = "initial" }
+                => { context =
+                        { times_visited = 0
+                        }
+                   , text =
+                        \context ->
+                            """
+                            Thanks! Your faith will be rewarded.
+                            """
+                   , actions =
+                        [ { label = "Go back", action = Goto "initial" }
                         ]
                    }
               )
@@ -76,6 +114,23 @@ model =
 -- Update
 
 
+visit : String -> Model -> Model
+visit sceneName model =
+    case Dict.get sceneName model.scenes of
+        Just scene ->
+            let
+                oldContext =
+                    scene.context
+
+                newContext =
+                    { oldContext | times_visited = oldContext.times_visited + 1 }
+            in
+                { model | scenes = (Dict.insert sceneName { scene | context = newContext } model.scenes) }
+
+        Nothing ->
+            model
+
+
 type Msg
     = Goto String
 
@@ -84,7 +139,7 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Goto scene ->
-            { model | currentScene = scene }
+            visit scene { model | currentScene = scene }
 
 
 
@@ -94,6 +149,15 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ div [] [ text (withDefault { text = "ERROR", buttons = [] } (Dict.get model.currentScene model.scenes)).text ]
-        , div [] (map (\{ label, goto } -> button [ onClick (Goto goto) ] [ text label ]) (withDefault { text = "ERROR", buttons = [] } (Dict.get model.currentScene model.scenes)).buttons)
+        [ div
+            []
+            [ text
+                (let
+                    scene =
+                        withDefault defaultScene (Dict.get model.currentScene model.scenes)
+                 in
+                    scene.text scene.context
+                )
+            ]
+        , div [] (map (\{ label, action } -> button [ onClick (action) ] [ text label ]) (withDefault defaultScene (Dict.get model.currentScene model.scenes)).actions)
         ]
