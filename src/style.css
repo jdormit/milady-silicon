@@ -61,7 +61,7 @@ h4 {
 }
 
 .actions button:focus {
-    outline: 0;
+    outline: none;
 }
 
 .actions button:hover {
