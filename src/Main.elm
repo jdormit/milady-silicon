@@ -5,8 +5,9 @@ import Markdown
 import List exposing (map)
 import Dict
 import Maybe exposing (withDefault)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, text, node, ul, li, h1, h2, h3, h4, h5)
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (class, rel, href)
 
 
 main =
@@ -25,7 +26,7 @@ type alias Model =
 
 model : Model
 model =
-    { currentScene = "initial"
+    { currentScene = "Broken Circuit Common Room"
     , scenes = Scene.scenes
     }
 
@@ -61,19 +62,32 @@ update msg model =
 
 -- View
 
+css : String -> Html Scene.SceneMsg
+css path =
+    node "link" [ rel "stylesheet", href path ] []
 
 view : Model -> Html Scene.SceneMsg
 view model =
-    div []
-        [ div
-            []
-            [ Markdown.toHtml []
-                (let
-                    scene =
-                        withDefault Scene.defaultScene (Dict.get model.currentScene model.scenes)
-                 in
-                    scene.text scene.context
-                )
+    let
+        scene =
+            withDefault Scene.defaultScene (Dict.get model.currentScene model.scenes)
+    in
+    div [ class "container"
+        ]
+        [ css "style.css" 
+        , div
+            [ class "scene"
             ]
-        , div [] (map (\{ label, action } -> button [ onClick (action) ] [ text label ]) (withDefault Scene.defaultScene (Dict.get model.currentScene model.scenes)).actions)
+            [ h2 [] [ text model.currentScene ]
+            , Markdown.toHtml [] (scene.text scene.context)
+            ]
+        , ul
+            [ class "actions"
+            ]
+            (map
+                (\{ label, action } ->
+                    li [] [ button [ onClick (action) ] [ text label ] ]
+                )
+                (scene.actions scene.context)
+            )
         ]

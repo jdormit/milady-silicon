@@ -24,66 +24,89 @@ defaultSceneContext =
 
 type alias Scene =
     { context : SceneContext
-    , actions : List { label : String, action : SceneMsg }
+    , actions : SceneContext -> List { label : String, action : SceneMsg }
     , text : SceneContext -> String
     }
 
 
 defaultScene =
     { context = defaultSceneContext
-    , actions = []
+    , actions = \context -> []
     , text = \context -> "ERROR"
     }
 
 
 scenes =
     Dict.fromList
-        [ ("initial"
-            => { context =
-                    defaultSceneContext
-               , text =
-                    \context -> """
-This is a fascinating story, more magical then Harry Potter, more insightful than
-Moby Dick, more weighty that War and Peace. It will surely be the next Great
-American Novel.
-
-Visted """ ++ toString context.times_visited ++ """ times
-"""
-               , actions =
-                    [ { label = "I don't buy it", action = Goto "little_faith" }
-                    , { label = "Cool!", action = Goto "gratitude" }
-                    ]
-               }
-          )
-        , ("little_faith"
+        [ ("Broken Circuit Common Room"
             => { context =
                     defaultSceneContext
                , text =
                     \context ->
                         case context.times_visited of
-                            1 ->
-                                "Whatever, bro"
+                            0 ->
+                                """
+The Broken Circuit is the largest coffeehouse in Arch. Probably the largest in all of the Silicon
+Isles. It squats on the bottom three floors of an ancient skyscraper. Businessmen and nobility
+rub elbows with thieves and drug dealers here. Tinkers sell scrap metal, wires, bits of circuitry
+from jury-rigged stalls in the coffeehouse's numerous rooms. They say you can buy anything or meet
+anyone at the Broken Circuit.
 
-                            2 ->
-                                "Seriously, again?"
+It's a good place to plot a revenge.
+
+You sit in a corner booth in the cavernous common room. Threadbare velvet cushions cover the bench.
+A low hum of conversation washes over you as you scan the room, one hand always at the hilt of your
+rapier  .
+
+A doorway in the far wall opens onto stairs leading to the higher levels of the Broken Circuit.
+Through a curtained archway, a balcony overlooks Arch's jagged skyline.
+"""
 
                             _ ->
-                                "I'm done with you."
+                                """
+Hookah smoke and fragrant steam blend in the dim common room.
+
+A doorway in the far wall opens onto stairs leading to the higher levels of the Broken Circuit.
+Through a curtained archway, a balcony overlooks Arch's jagged skyline.
+"""
                , actions =
-                    [ { label = "Go back", action = Goto "initial" }
-                    ]
+                    \context ->
+                        [ { label = "Go upstairs", action = Goto "Broken Circuit Upper Levels" }
+                        , { label = "Go out to the balcony", action = Goto "Sunset over Arch" }
+                        ]
                }
           )
-        , ("gratitude"
+        , ("Broken Circuit Upper Levels"
+            => { context =
+                    defaultSceneContext
+               , text =
+                    \context ->
+                        """
+The upper floors of the Broken Circuit are quieter than the common room. Scholars jot notes in the
+margins of hand-copied research papers, while fortunes are lost or made in private back rooms
+"""
+               , actions =
+                    \context ->
+                        [ { label = "Go down to the common room", action = Goto "Broken Circuit Common Room" }
+                        ]
+               }
+          )
+        , ("Sunset over Arch"
             => { context =
                     defaultSceneContext
                , text =
                     \context -> """
-Thanks! Your faith will be rewarded.
+The setting sun turns Arch's skyscrapers and tenements into silhouettes. Against the sky's orange
+and pink backdrop, you can't tell which of the buildings are sound and which are crumbling into
+decay. The river bisects the view. It fractures the sunset into a hundred reflected red-gold sparks.
+
+The ambient sounds of the coffee house seem muted out here. Somewhere in your chest you can feel
+the humming of the Machines, deep beneath the streets.
 """
                , actions =
-                    [ { label = "Go back", action = Goto "initial" }
-                    ]
+                    \context ->
+                        [ { label = "Go back inside", action = Goto "Broken Circuit Common Room" }
+                        ]
                }
           )
         ]
