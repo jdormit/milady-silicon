@@ -74,7 +74,7 @@ view model =
     in
     div [ class "container"
         ]
-        [ css "style.css" 
+        [ css "./style.css" 
         , div
             [ class "scene"
             ]
