@@ -1,6 +1,7 @@
 module Main exposing (..)
 
-import Scene exposing (SceneMsg(..))
+import Scene exposing (renderScene, renderActionLabel, SceneMsg(..))
+import Scenes exposing (global_context)
 import Markdown
 import List exposing (map)
 import Dict
@@ -20,14 +21,16 @@ main =
 
 type alias Model =
     { currentScene : String
-    , scenes : Dict.Dict String Scene.Scene
+    , global_context : Scenes.GlobalContext
+    , scenes : Scenes.Scenes
     }
 
 
 model : Model
 model =
     { currentScene = "Broken Circuit Common Room"
-    , scenes = Scene.scenes
+    , global_context = global_context
+    , scenes = Scenes.scenes
     }
 
 
@@ -37,19 +40,20 @@ model =
 
 visit : String -> Model -> Model
 visit sceneName model =
-    case Dict.get sceneName model.scenes of
-        Just scene ->
-            let
-                oldContext =
-                    scene.context
+    let
+        old_context =
+            model.global_context
 
-                newContext =
-                    { oldContext | times_visited = oldContext.times_visited + 1 }
-            in
-                { model | scenes = (Dict.insert sceneName { scene | context = newContext } model.scenes) }
+        num_times_visited =
+            withDefault 0 (Dict.get sceneName old_context.times_visited)
 
-        Nothing ->
-            model
+        new_times_visited =
+            Dict.insert sceneName (num_times_visited + 1) old_context.times_visited
+
+        new_context =
+            { old_context | times_visited = new_times_visited }
+    in
+        { model | global_context = new_context }
 
 
 update : Scene.SceneMsg -> Model -> Model
@@ -62,32 +66,35 @@ update msg model =
 
 -- View
 
+
 css : String -> Html Scene.SceneMsg
 css path =
     node "link" [ rel "stylesheet", href path ] []
+
 
 view : Model -> Html Scene.SceneMsg
 view model =
     let
         scene =
-            withDefault Scene.defaultScene (Dict.get model.currentScene model.scenes)
+            withDefault Scenes.default_scene (Dict.get model.currentScene model.scenes)
     in
-    div [ class "container"
-        ]
-        [ css "./style.css" 
-        , div
-            [ class "scene"
+        div
+            [ class "container"
             ]
-            [ h2 [] [ text model.currentScene ]
-            , Markdown.toHtml [] (scene.text scene.context)
-            ]
-        , ul
-            [ class "actions"
-            ]
-            (map
-                (\{ label, action } ->
-                    li [] [ button [ onClick (action) ] [ text label ] ]
+            [ css "./style.css"
+            , div
+                [ class "scene"
+                ]
+                [ h2 [] [ text model.currentScene ]
+                , Markdown.toHtml [] (renderScene scene model.global_context)
+                ]
+            , ul
+                [ class "actions"
+                ]
+                (map
+                    (\action ->
+                        li [] [ button [ onClick (action.action) ] [ text (renderActionLabel action scene model.global_context) ] ]
+                    )
+                    (scene.actions model.global_context)
                 )
-                (scene.actions scene.context)
-            )
-        ]
+            ]
