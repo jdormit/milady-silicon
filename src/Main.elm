@@ -22,7 +22,6 @@ main =
 type alias Model =
     { currentScene : String
     , global_context : Scenes.GlobalContext
-    , scenes : Scenes.Scenes
     }
 
 
@@ -30,9 +29,11 @@ model : Model
 model =
     { currentScene = "Broken Circuit Common Room"
     , global_context = global_context
-    , scenes = Scenes.scenes
     }
 
+
+scenes : Scenes.Scenes
+scenes = Scenes.scenes
 
 
 -- Update
@@ -76,7 +77,7 @@ view : Model -> Html Scene.SceneMsg
 view model =
     let
         scene =
-            withDefault Scenes.default_scene (Dict.get model.currentScene model.scenes)
+            withDefault Scenes.default_scene (Dict.get model.currentScene scenes)
     in
         div
             [ class "container"
