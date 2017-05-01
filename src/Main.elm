@@ -12,7 +12,7 @@ import Html.Attributes exposing (class, rel, href)
 
 
 main =
-    Html.program 
+    Html.program
         { init = init
         , view = view
         , update = update
@@ -36,12 +36,16 @@ model =
     , global_context = global_context
     }
 
-init : (Model, Cmd Scene.Msg)
+
+init : ( Model, Cmd Scene.Msg )
 init =
-    (model, Cmd.none)
+    ( model, Cmd.none )
+
 
 scenes : Scenes.Scenes
-scenes = Scenes.scenes
+scenes =
+    Scenes.scenes
+
 
 
 -- Subscriptions
@@ -50,6 +54,8 @@ scenes = Scenes.scenes
 subscriptions : Model -> Sub Scene.Msg
 subscriptions model =
     Sub.none
+
+
 
 -- Update
 
@@ -72,11 +78,11 @@ visit sceneName model =
         { model | global_context = new_context }
 
 
-update : Scene.Msg -> Model -> (Model, Cmd Scene.Msg)
+update : Scene.Msg -> Model -> ( Model, Cmd Scene.Msg )
 update msg model =
     case msg of
         Goto scene ->
-            (visit scene { model | currentScene = scene }, Cmd.none)
+            ( visit scene { model | currentScene = scene }, Cmd.none )
 
 
 
