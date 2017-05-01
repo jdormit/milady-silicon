@@ -1,11 +1,11 @@
-module Scene exposing (Scene, SceneMsg(..), renderScene, renderActionLabel)
+module Scene exposing (Scene, Msg(..), renderScene, renderActionLabel)
 
 import Template exposing (Template, template, render)
 
 
 type alias Action local_context =
     { label : Template local_context
-    , action : SceneMsg
+    , action : Msg
     }
 
 
@@ -16,7 +16,7 @@ type alias Scene local_context global_context =
     }
 
 
-type SceneMsg
+type Msg
     = Goto String
 
 

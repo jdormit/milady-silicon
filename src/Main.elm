@@ -1,18 +1,23 @@
 module Main exposing (..)
 
-import Scene exposing (renderScene, renderActionLabel, SceneMsg(..))
+import Scene exposing (renderScene, renderActionLabel, Msg(..))
 import Scenes exposing (global_context)
 import Markdown
 import List exposing (map)
 import Dict
 import Maybe exposing (withDefault)
-import Html exposing (Html, button, div, text, node, ul, li, h1, h2, h3, h4, h5)
+import Html exposing (..)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (class, rel, href)
 
 
 main =
-    Html.beginnerProgram { model = model, view = view, update = update }
+    Html.program 
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 
@@ -31,10 +36,20 @@ model =
     , global_context = global_context
     }
 
+init : (Model, Cmd Scene.Msg)
+init =
+    (model, Cmd.none)
 
 scenes : Scenes.Scenes
 scenes = Scenes.scenes
 
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Scene.Msg
+subscriptions model =
+    Sub.none
 
 -- Update
 
@@ -57,23 +72,23 @@ visit sceneName model =
         { model | global_context = new_context }
 
 
-update : Scene.SceneMsg -> Model -> Model
+update : Scene.Msg -> Model -> (Model, Cmd Scene.Msg)
 update msg model =
     case msg of
         Goto scene ->
-            visit scene { model | currentScene = scene }
+            (visit scene { model | currentScene = scene }, Cmd.none)
 
 
 
 -- View
 
 
-css : String -> Html Scene.SceneMsg
+css : String -> Html Scene.Msg
 css path =
     node "link" [ rel "stylesheet", href path ] []
 
 
-view : Model -> Html Scene.SceneMsg
+view : Model -> Html Scene.Msg
 view model =
     let
         scene =
@@ -92,7 +107,7 @@ view model =
             , ul
                 [ class "actions"
                 ]
-                (map
+                (List.map
                     (\action ->
                         li [] [ button [ onClick (action.action) ] [ text (renderActionLabel action scene model.global_context) ] ]
                     )

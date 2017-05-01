@@ -1,7 +1,7 @@
 module Scenes exposing (Scenes, scenes, default_scene, global_context, GlobalContext)
 
 import Template exposing (template)
-import Scene exposing (Scene, SceneMsg(..))
+import Scene exposing (Scene, Msg(..))
 import Dict
 import Maybe exposing (withDefault)
 
